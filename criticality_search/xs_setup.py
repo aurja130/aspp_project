@@ -1,19 +1,6 @@
+import numpy as np
+
 def calculate_average_atomic_mass(perc_U235, perc_U238):
-    """
-    Calculate the average atomic mass of a uranium sample given the percentage of U-235 and U-238 isotopes.
-
-    Parameters
-    ----------
-    perc_U235 : float
-        The percentage of U-235 in the uranium sample.
-    perc_U238 : float
-        The percentage of U-238 in the uranium sample.
-
-    Returns
-    -------
-    float
-        The total atomic mass of the uranium sample.
-    """
     M_U235 = 235.0439   # g/mol
     M_U238 = 238.0508   # g/mol
 
@@ -34,7 +21,7 @@ def calculate_individual_density(UO2_density, perc_U235, perc_U238):
 
     return density_U235, density_U238, density_O
 
-def calculate_macroscopic_cross_section(UO2_density, perc_U235, perc_U238, sigma_U235, sigma_U238, sigma_O):
+def calculate_macroscopic_xs_UO2(UO2_density, perc_U235, perc_U238, sigma_U235, sigma_U238, sigma_O):
     density_U235, density_U238, density_O = calculate_individual_density(UO2_density, perc_U235, perc_U238) # g/cm^3
 
     atom_density_U235 = density_U235 * 6.022e23 / 235.0439  # atoms/cm^3
@@ -45,7 +32,22 @@ def calculate_macroscopic_cross_section(UO2_density, perc_U235, perc_U238, sigma
 
     return total_macroscopic_xs
 
-SIGMA_F = calculate_macroscopic_cross_section(10, 5, 95, 585e-24, 16.8e-30, 0)
+def assign_xs(layout, fuel_xs, moderator_xs):
+    xs = np.where(layout == 1, fuel_xs, moderator_xs)
+    return xs
 
-print(SIGMA_F)
-# 0.6605601191478466
+def calculate_macroscopic_xs_H2O(sigma_h, sigma_o):
+    # molar_mass = 18 # g/mole
+    # density = 1 # g/cm^3
+    # N_avogadro = 6.022e23   # molecules/mole
+    # molecular_number_density = density * N_avogadro / molar_mass    # molecules/cm^3
+
+    # N_H = 2 * molecular_number_density  # atomic number density of hydrogen, 6.691e+22 atoms/cm^3
+    # N_O = 1 * molecular_number_density  # atomic number density of oxygen, 3.346e+22 atoms/cm^3
+
+    N_H = 6.691e+22
+    N_O = 3.346e+22
+
+    SIGMA_H2O = N_H * sigma_h + N_O * sigma_o
+
+    return SIGMA_H2O
