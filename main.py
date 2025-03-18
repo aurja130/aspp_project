@@ -15,7 +15,7 @@ h = 1                       # resolution, cm
 
 N_y, layout_1D, layout_2D = geom.generate_layout(rods_x, rods_y, rod_dia, rod_pitch)
 
-# nuclear data: yield and macroscopic cross-sections
+# Dummy nuclear data: yield and macroscopic cross-sections
 
 chi_1 = 0.99                # yield, unitless
 chi_2 = 0.01                # unitless
